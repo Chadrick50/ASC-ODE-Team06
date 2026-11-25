@@ -40,13 +40,14 @@ namespace ASC_ode
   {
     Vector<> m_vecf;   // allocated once, not in every step
     Vector<> m_vecf_tilde;
+
   public:
     ImprovedEuler(std::shared_ptr<NonlinearFunction> rhs) 
     : TimeStepper(rhs), m_vecf(rhs->dimF()), m_vecf_tilde(rhs->dimF()) {}
     void doStep(double tau, VectorView<double> y) override
     {
       this->m_rhs->evaluate(y, m_vecf);
-      y_tilde = tau/2 *m_vecf + y;
+      Vector<> y_tilde = tau/2 *m_vecf + y;
       this->m_rhs->evaluate(y_tilde, m_vecf_tilde);
       y += tau * m_vecf_tilde;
     }
