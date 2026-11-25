@@ -36,6 +36,23 @@ namespace ASC_ode
     }
   };
 
+  class ImprovedEuler : public TimeStepper
+  {
+    Vector<> m_vecf;   // allocated once, not in every step
+    Vector<> m_vecf_tilde;
+  public:
+    ImprovedEuler(std::shared_ptr<NonlinearFunction> rhs) 
+    : TimeStepper(rhs), m_vecf(rhs->dimF()), m_vecf_tilde(rhs->dimF()) {}
+    void doStep(double tau, VectorView<double> y) override
+    {
+      this->m_rhs->evaluate(y, m_vecf);
+      y_tilde = tau/2 *m_vecf + y;
+      this->m_rhs->evaluate(y_tilde, m_vecf_tilde);
+      y += tau * m_vecf_tilde;
+    }
+  };
+
+
   // solves y - y_n - tau f(y) = 0 with Newton's method. The equation is built once
   // by the function algebra, y_n and tau are updated in every step.
   class ImplicitEuler : public TimeStepper
