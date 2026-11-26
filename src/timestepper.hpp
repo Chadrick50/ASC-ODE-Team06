@@ -92,15 +92,15 @@ namespace ASC_ode
       m_yold = std::make_shared<ConstantFunction>(rhs->dimX());
       m_rhs_old = std::make_shared<ConstantFunction>(rhs->dimX());
       auto ynew = std::make_shared<IdentityFunction>(rhs->dimX());
-      m_equ = ynew - m_yold - m_tau/2 * (m_rhs_old + m_rhs);
+      m_equ = ynew - m_yold - m_tau * (m_rhs_old + m_rhs);
     }
 
     void doStep(double tau, VectorView<double> y) override
     {
       m_yold->set(y);
-      auto tmp = evaluate(y, m_vecf);
-      m_rhs_old->set(tmp);
-      m_tau->set(tau);
+      this->m_rhs->evaluate(y, m_vecf);
+      m_rhs_old->set(m_vecf);
+      m_tau->set(tau / 2);
       NewtonSolver(m_equ, y);
     }
   };
