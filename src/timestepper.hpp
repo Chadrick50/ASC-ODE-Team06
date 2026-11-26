@@ -78,6 +78,34 @@ namespace ASC_ode
     }
   };
 
+  class CrankNicolson : public TimeStepper
+  {
+    std::shared_ptr<NonlinearFunction> m_equ;
+    std::shared_ptr<Parameter> m_tau;
+    std::shared_ptr<ConstantFunction> m_yold;
+    std::shared_ptr<ConstantFunction> m_rhs_old;
+    Vector<> m_vecf;
+  public:
+    CrankNicolson(std::shared_ptr<NonlinearFunction> rhs) 
+    : TimeStepper(rhs), m_tau(std::make_shared<Parameter>(0.0)), m_vecf(rhs->dimX()) 
+    {
+      m_yold = std::make_shared<ConstantFunction>(rhs->dimX());
+      m_rhs_old = std::make_shared<ConstantFunction>(rhs->dimX());
+      auto ynew = std::make_shared<IdentityFunction>(rhs->dimX());
+      m_equ = ynew - m_yold - m_tau * (m_rhs_old + m_rhs);
+    }
+
+    void doStep(double tau, VectorView<double> y) override
+    {
+      m_yold->set(y);
+      this->m_rhs->evaluate(y, m_vecf);
+      m_rhs_old->set(m_vecf);
+      m_tau->set(tau / 2);
+      NewtonSolver(m_equ, y);
+    }
+  };
+
+
 
   
 
