@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <memory>
+#include <array>
 
 #include <vector.hpp>
 #include <matrix.hpp>
@@ -31,7 +32,7 @@ namespace ASC_ode
   {
     size_t m_n;
   public:
-    IdentityFunction (size_t n) : m_n(n) { } 
+    IdentityFunction (size_t n) : m_n(n) { }
     size_t dimX() const override { return m_n; }
     size_t dimF() const override { return m_n; }
     void evaluate (VectorView<double> x, VectorView<double> f) const override
@@ -69,8 +70,8 @@ namespace ASC_ode
     }
   };
 
-  
-  
+
+
   // f(x) = faca fa(x) + facb fb(x)
   class SumFunction : public NonlinearFunction
   {
@@ -115,7 +116,7 @@ namespace ASC_ode
   }
 
   // a scalar, which can be changed after the expression is built (e.g. the time-step)
-  class Parameter 
+  class Parameter
   {
     double m_value;
   public:
@@ -149,7 +150,7 @@ namespace ASC_ode
     }
   };
 
-  inline auto operator* (std::shared_ptr<Parameter> parama, 
+  inline auto operator* (std::shared_ptr<Parameter> parama,
                          std::shared_ptr<NonlinearFunction> f)
   {
     return std::make_shared<ScaleFunction>(f, parama);
@@ -158,7 +159,7 @@ namespace ASC_ode
   inline auto operator* (double a, std::shared_ptr<NonlinearFunction> f)
   {
     return std::make_shared<Parameter>(a) * f;
-  } 
+  }
 
 
 
@@ -194,13 +195,13 @@ namespace ASC_ode
       df = jaca*jacb;
     }
   };
-  
-  
+
+
   inline auto Compose (std::shared_ptr<NonlinearFunction> fa, std::shared_ptr<NonlinearFunction> fb)
   {
     return std::make_shared<ComposeFunction> (fa, fb);
   }
-  
+
   // fa acts on the entries [firstx, firstx+fa->dimX()) of x, and writes into
   // the entries [firstf, firstf+fa->dimF()) of f, all other entries are zero
   class EmbedFunction : public NonlinearFunction
@@ -232,13 +233,13 @@ namespace ASC_ode
     }
   };
 
-  
+
   // keeps the entries [first, next) of x, sets the others to zero
   class Projector : public NonlinearFunction
   {
     size_t m_size, m_first, m_next;
   public:
-    Projector (size_t size, 
+    Projector (size_t size,
                size_t first, size_t next)
       : m_size(size), m_first(first), m_next(next) { }
 
@@ -256,7 +257,7 @@ namespace ASC_ode
     }
   };
 
-  
+
 }
 
 #endif

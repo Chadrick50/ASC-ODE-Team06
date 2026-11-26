@@ -9,9 +9,8 @@ include_directories(src nanoblas/src)
 add_subdirectory (nanoblas)
 
 
-add_executable (test_ode demos/test_ode.cpp)
-target_link_libraries (test_ode PUBLIC nanoblas)
+add_executable (test_mass_spring demos/test_mass_spring.cpp)
+target_link_libraries (test_mass_spring PUBLIC nanoblas)
 
 add_executable (demo_autodiff demos/demo_autodiff.cpp)
 target_link_libraries (demo_autodiff PUBLIC nanoblas)
-
