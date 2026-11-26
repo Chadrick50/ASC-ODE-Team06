@@ -12,5 +12,8 @@ add_subdirectory (nanoblas)
 add_executable (test_mass_spring demos/test_mass_spring.cpp)
 target_link_libraries (test_mass_spring PUBLIC nanoblas)
 
+add_executable (test_RC_circuit demos/test_RC_circuit.cpp)
+target_link_libraries (test_RC_circuit PUBLIC nanoblas)
+
 add_executable (demo_autodiff demos/demo_autodiff.cpp)
 target_link_libraries (demo_autodiff PUBLIC nanoblas)
